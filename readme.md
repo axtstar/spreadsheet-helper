@@ -29,11 +29,11 @@
 
 | # | 名称            | 型      | validation                           |
 |---|---------------|--------|--------------------------------------|
-| 0 | ステータス         | string | requireNotNull:                      |
-| 1 | 募集職種名（求人タイトル） | string | requireNotNull:requireStringSize(50) |
-| 2 | 職種大           | string | requireNotNull:                      |
-| 3 | 職種中           | string | requireNotNull:                      |
-| 4 | 職種小           | string | requireNotNull:                      |
+| 0 | 例１         | string | requireNotNull:                      |
+| 1 | 例２ | string | requireNotNull:requireStringSize(50) |
+| 2 | 例３           | string | requireNotNull:                      |
+| 3 | 例４           | string | requireNotNull:                      |
+| 4 | 例５           | string | requireNotNull:                      |
 
 名称はバリデーションのみ使用しています。
 
