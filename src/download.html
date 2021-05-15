@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/vue@next"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+        Download CSV?<br>
+        レンジ : <input v-model="range" /><br>
+        <button @click="executeDownload" v-bind:disabled="button_disabled">ダウンロード CSV</button>
+        <br>
+        <font color="red">chromeでgoogleドライブと違うアカウントでサインインしているとダウンロードができないようです。</font>
+        <br>
+        <button @click="omake">おまけ</button>
+        {{ message }}
+      </div>
+      <div v-html="appear">
+      </div>
+    </div>
+    <script type="text/javascript">
+      var app = Vue.createApp({
+        el: '#app',
+        data(){
+          return {
+            message: '',
+            appear: '',
+            button_disabled: false,
+            range: '6-65536'
+          }
+        },
+        methods: {
+          executeDownload: function() {
+            this.button_disabled=true;
+            google.script.run.withSuccessHandler((url)=>{
+                this.buttonEnable();
+                window.open(url);
+            })
+            .withFailureHandler(function(data,element) {
+                this.message = "failed!" + data + element;
+            }).saveAsCSVRange(this.range)
+          },
+          buttonEnable: function(){
+            this.button_disabled=false;
+          },
+          omake: function(){
+            this.appear = "initializing...";
+            google.script.run.withSuccessHandler((embed)=>{
+              this.appear = embed;
+            })
+            .withFailureHandler(function(data,element) {
+                this.message = "failed!" + data + element;
+            })
+            .getOmakeHtml();
+          }
+        }
+      }).mount('#app');
+    </script>
+  </body>
+</html>
