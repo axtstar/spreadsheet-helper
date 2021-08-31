@@ -11,12 +11,12 @@ class Column {
     this.validation = validation;
   }
 
-  getValue(value) {
+  getValue(value: Number | String | Date | Boolean) {
     if (this.type === 'number' || this.type === 'bool') {
       if (value === null) {
         return '';
       } else {
-        return `${value.replace(/,/g, '').replace(/"/g, '""')}`;
+        return `${(<String>value).replace(/,/g, '').replace(/"/g, '""')}`;
       }
     } else if (this.type === 'date') {
       if (value !== null && value !== '') {
@@ -30,14 +30,14 @@ class Column {
         if (value === null) {
           return '""';
         } else {
-          return `"${value.replace(/"/g, '""')}"`;
+          return `"${(<String>value).replace(/"/g, '""')}"`;
         }
       }
     } else {
       if (value === null) {
         return '""';
       } else {
-        return `"${value.replace(/"/g, '""')}"`;
+        return `"${(<String>value).replace(/"/g, '""')}"`;
       }
     }
   }
@@ -180,7 +180,7 @@ export class Columns {
     columnOffset,
     _minRow: number,
     _maxRow: number
-  ) {
+  ): String {
     try {
       const minRow = _minRow - 1;
       const maxRow = _maxRow - 1;
@@ -231,41 +231,55 @@ function adCheckTest() {
   Utilities.sleep(1000);
 
   //settings
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss: GoogleAppsScript.Spreadsheet.Spreadsheet | null = SpreadsheetApp.getActiveSpreadsheet();
   readConfig();
   console.log(`rowOffset: ${rowOffset}`);
   console.log(`columnOffset : ${columnOffset}`);
 
   //column読み込み
-  const sheetColumn = ss.getSheetByName(columnsSheet);
-  const cols = new Columns(sheetColumn);
-  const value = ss.getActiveRange().getValues()[0];
-  const result = cols.validate(value, 0);
-  console.log(`result: ${result}`);
-  return result;
+  if (ss !== null) {
+    const sheetColumn = ss.getSheetByName(columnsSheet);
+    const cols = new Columns(sheetColumn);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const value: any = (<GoogleAppsScript.Spreadsheet.Spreadsheet>ss)
+      .getActiveRange()
+      .getValues()[0];
+    const result = cols.validate(value, 0);
+    console.log(`result: ${result}`);
+    return result;
+  } else {
+    console.log('result: sheet not found');
+    return 'result: sheet not found';
+  }
 }
 
 /**
  * シート上の間違い指摘
  * @param value 1レコード分(D~BM)
  */
-function record_check(value) {
+function record_check(
+  value: GoogleAppsScript.Spreadsheet.Range | null
+): String {
   //  Utilities.sleep(1000);
-  let returnValue = '';
+  if (value !== null) {
+    let returnValue = '';
 
-  //settings
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  readConfig();
-  console.log(`rowOffset: ${rowOffset}`);
-  console.log(`columnOffset : ${columnOffset}`);
+    //settings
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    readConfig();
+    console.log(`rowOffset: ${rowOffset}`);
+    console.log(`columnOffset : ${columnOffset}`);
 
-  //column読み込み
-  const sheetColumn = ss.getSheetByName(columnsSheet);
-  const cols = new Columns(sheetColumn);
+    //column読み込み
+    const sheetColumn = ss.getSheetByName(columnsSheet);
+    const cols = new Columns(sheetColumn);
 
-  returnValue = cols.validate(value[0], 0);
+    returnValue = cols.validate(value[0], 0);
 
-  return returnValue;
+    return returnValue;
+  } else {
+    return '';
+  }
 }
 
 //settingをLoad
@@ -273,14 +287,18 @@ function readConfig() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   //「settings」から情報取得
   const settingSheetName = 'settings';
-  const settingSheet = ss.getSheetByName(settingSheetName);
+  const settingSheet: GoogleAppsScript.Spreadsheet.Sheet | null = ss.getSheetByName(
+    settingSheetName
+  );
 
-  rowOffset = settingSheet.getRange('D2').getValue();
-  columnOffset = settingSheet.getRange('D3').getValue();
-  saveFolder = settingSheet.getRange('D4').getValue();
-  columnsSheet = settingSheet.getRange('D5').getValue();
-  omakeHtml = settingSheet.getRange('D6').getValue();
-  prefix = settingSheet.getRange('D7').getValue();
+  if (settingSheet !== null) {
+    rowOffset = settingSheet.getRange('D2').getValue();
+    columnOffset = settingSheet.getRange('D3').getValue();
+    saveFolder = settingSheet.getRange('D4').getValue();
+    columnsSheet = settingSheet.getRange('D5').getValue();
+    omakeHtml = settingSheet.getRange('D6').getValue();
+    prefix = settingSheet.getRange('D7').getValue();
+  }
 }
 
 function getOmakeHtml() {
@@ -288,7 +306,7 @@ function getOmakeHtml() {
   return omakeHtml;
 }
 
-function getDateStr(dt) {
+function getDateStr(dt: Date) {
   return `${dt.getFullYear()}-${
     dt.getMonth() + 1
   }-${dt.getDate()}_${dt.getHours()}_${dt.getMinutes()}_${dt.getSeconds()}`;
@@ -311,9 +329,13 @@ function saveAsCSV(): string {
   return saveAsCSVRange('1-65536');
 }
 
-//spreadsheetを保存
-function saveAsCSVRange(rowRange): string {
-  const ranges = rowRange.split('-');
+/**
+ * spreadsheetを保存
+ * @param rowRangeExpression range範囲 1-20
+ * @returns url
+ */
+function saveAsCSVRange(rowRangeExpression: String): string {
+  const ranges = rowRangeExpression.split('-');
   let rMin = 1;
   let rMax = 65536;
   if (ranges.length >= 2) {
@@ -349,7 +371,7 @@ function saveAsCSVRange(rowRange): string {
     rMax
   );
   // create a file in the Docs List with the given name and the csv data
-  const file = folder.createFile(fileName, csvFile);
+  const file = folder.createFile(fileName, <string>csvFile);
   //File downlaod
   const url = file.getUrl();
   console.log(`${file.getUrl()}`);
