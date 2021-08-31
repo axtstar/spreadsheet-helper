@@ -56,6 +56,7 @@ const regExp_requireStringSize = new RegExp('requireStringSize\\(([0-9]+)\\)');
 const regExp_requiredNumericRange = new RegExp(
   'requiredNumericRange\\(([0-9 ]+),([0-9 ]+)\\)'
 );
+const regExp_requiredRegexp = new RegExp('requiredRegexp\\((.+)\\)');
 
 export class Columns {
   columns: Array<Column>;
@@ -106,6 +107,17 @@ export class Columns {
     return result;
   }
 
+  requireRegEx(value, regex, name) {
+    let result = '';
+    const reg = new RegExp(regex);
+    const r = value.match(reg);
+    if (r === null) {
+      result =
+        result + name + `は正規表現(${regex})にマッチしません。(${value})\n`;
+    }
+    return result;
+  }
+
   validate(row, rowOffset) {
     let result = '';
     for (let i = 0; i < row.length; i++) {
@@ -117,6 +129,7 @@ export class Columns {
             const r1 = String(v).match(regExp_requireNotNull);
             const r2 = String(v).match(regExp_requireStringSize);
             const r3 = String(v).match(regExp_requiredNumericRange);
+            const r4 = String(v).match(regExp_requiredRegexp);
             if (r1 !== null) {
               result = result + this.requireNotNull(`${row[i]}`, c.name);
             }
@@ -127,6 +140,9 @@ export class Columns {
             if (r3 !== null) {
               result =
                 result + this.numericRange(`${row[i]}`, r3[1], r3[2], c.name);
+            }
+            if (r4 !== null) {
+              result = result + this.requireRegEx(`${row[i]}`, r4[1], c.name);
             }
 
             console.log(
