@@ -3,7 +3,8 @@ class Column {
   name: String
   type: String
   validation: String
-  constructor(id, name, type, validation){
+
+  constructor(id: Number, name: String, type: String, validation: String){
     this.id = id;
     this.name = name;
     this.type = type;
@@ -55,7 +56,7 @@ const regExp_requireStringSize = new RegExp("requireStringSize\\(([0-9]+)\\)");
 const regExp_requiredNumericRange = new RegExp("requiredNumericRange\\(([0-9 ]+),([0-9 ]+)\\)");
 
 
-class Columns {
+export class Columns {
   columns: Array<Column>
   constructor(columnSheet){
 

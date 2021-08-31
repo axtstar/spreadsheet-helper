@@ -3,6 +3,6 @@
         "lib": ["esnext"],
         "experimentalDecorators": true,
         "outDir": "dist",
-        "rootDir": "src",
+        "rootDir": "src"
     }
   }
