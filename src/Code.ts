@@ -245,7 +245,7 @@ function adCheckTest(){
 
 /**
  * シート上の間違い指摘
- * @param value 求人票の1レコード分(D~BM)
+ * @param value 1レコード分(D~BM)
  */
 function record_check(value) {
 //  Utilities.sleep(1000);
