@@ -57,6 +57,7 @@ settingsシートに設定を記載します。
 | requireNotNull                | 必須    |
 | requireStringSize(50)         | 文字列上限 |
 | requiredNumericRange(0,100) | 数値範囲  |
+| requiredRegexp(^[a-zA-Z]+$) | 正規表現合致  |
 
 
 # CSV出力
