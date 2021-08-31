@@ -268,14 +268,9 @@ function record_check(value) {
 
 //settingをLoad
 function readConfig(){
-  var ss = SpreadsheetApp.getActiveSpreadsheet(); 
-  //active sheetのB3をまず取得する
-  var settingSheetName = ss.getRange("B3").getValue()
-  //未設定の場合は「settings」を設定
-  if (settingSheetName==""){
-    settingSheetName = "settings"
-  }
-
+  const ss = SpreadsheetApp.getActiveSpreadsheet(); 
+  //「settings」から情報取得
+  var settingSheetName = "settings"
   var settingSheet = ss.getSheetByName(settingSheetName)
 
   rowOffset = settingSheet.getRange("D2").getValue()
