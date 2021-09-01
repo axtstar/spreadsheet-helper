@@ -2,9 +2,45 @@
 
 これはスプレッドシートからCSVを出力したり、バリデーションを簡単にするgoogle app scriptです。
 
+# スプレッドシートへのデプロイ
+
+下記で該当のシートのあるアカウントにOAuthでログインします
+
+> clasp login
+
+依存モジュールなどの取得
+> npm install
+
+.clasp.json
+
+↑このファイルがトップに必要です。
+```
+{
+    "scriptId":"ここにapp scriptで作ったスクリプトIDを指定してください",
+    "rootDir": "./src"
+}
+```
+
+※注意下記コマンドは指定したプロジェクトを書き換えます！既に存在している場合は十分注意して実行ください。
+> npm run push
+
+.envにscriptIdを準備しておけば上記の.clasp.jsonを作成してデプロイをするスクリプトを置きました。
+
+> sh deploy.sh
+
+上記で失敗する場合は
+
+https://script.google.com/home/usersettings
+
+で有効化が必要
+
 # 使い方
 
-「onOpen」でスプレッドシートにメニューを追加します（CSV出力用）
+App Scriptで「onOpen」でスプレッドシートにメニューを追加します（CSV出力用）
+
+ただし↑上記の実行時に下記のプライベート情報へのアクセスを許可する必要があります。
+
+![アプリが確認されていない](./resources/承認されていない.png)
 
 settingsシートに設定を記載します。
 
@@ -65,34 +101,3 @@ settingsシートに設定を記載します。
 extraメニューのCSVユーティリティで起動します
 
 その後右のサイドバーとしてダイアログが出ますので、レンジ（行の範囲を指します、2-5のような指定）を指定してダウンロードCSVでCSVが出力できます。
-# スプレッドシートへのデプロイ
-
-下記で該当のシートのあるアカウントにOAuthでログインします
-
-> clasp login
-
-依存モジュールなどの取得
-> npm install
-
-.clasp.json
-
-↑このファイルがトップに必要です。
-```
-{
-    "scriptId":"ここにapp scriptで作ったプロジェクトIDを指定してください",
-    "rootDir": "./src"
-}
-```
-
-※注意下記コマンドは指定したプロジェクトを書き換えます！既に存在している場合は十分注意して実行ください。
-> npm run push
-
-.envにscriptIdを準備しておけば上記の.clasp.jsonを作成してデプロイをするスクリプトを置きました。
-
-> sh deploy.sh
-
-上記で失敗する場合は
-
-https://script.google.com/home/usersettings
-
-で有効化が必要かも
