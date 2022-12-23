@@ -23,9 +23,8 @@ class Column {
         if (!(value instanceof Date)) return '""'
         //const dt = new Date('Dec 30, 1899 00:00:00');
         const dt = value
-        const dateStr = `"${dt.getFullYear()}-${
-          dt.getMonth() + 1
-        }-${dt.getDate()}"`;
+        const dateStr = `"${dt.getFullYear()}-${dt.getMonth() + 1
+          }-${dt.getDate()}"`;
         return dateStr;
       } else {
         if (value === null) {
@@ -245,6 +244,25 @@ let columnsSheet = 'columns';
 let omakeHtml = '';
 let prefix = ''; //ファイル名prefix
 
+/**
+ * レンジ内からtargetに合致した行のresultの合致するカラムにある値を返す
+ * （vlookupのようなもの）
+ * @param target 
+ * @param range 
+ * @param target_idx 
+ * @param result_idx 
+ * @returns 
+ */
+function changeMaster(target: string, range: any[], target_idx: any, result_idx: any) {
+  let result = target
+  range.forEach(row => {
+    if (row[target_idx] + '' == target + '') {
+      result = row[result_idx]
+    }
+  })
+  return result
+}
+
 function adCheckTest() {
   Utilities.sleep(1000);
 
@@ -331,9 +349,8 @@ function getOmakeHtml() {
 }
 
 function getDateStr(dt: Date) {
-  return `${dt.getFullYear()}-${
-    dt.getMonth() + 1
-  }-${dt.getDate()}_${dt.getHours()}_${dt.getMinutes()}_${dt.getSeconds()}`;
+  return `${dt.getFullYear()}-${dt.getMonth() + 1
+    }-${dt.getDate()}_${dt.getHours()}_${dt.getMinutes()}_${dt.getSeconds()}`;
 }
 
 function onOpen() {
